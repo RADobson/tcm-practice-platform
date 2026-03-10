@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --earth: #D4A574;
+  --cyan: #00F0FF;
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --surface-2: #1a1a1a;
+  --border: #2a2a2a;
+  --text: #e5e5e5;
+  --text-muted: #888888;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #0a0a0a;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-earth-300 hover:bg-earth-400 text-dark-700 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-200 hover:bg-dark-100 text-white border border-dark-50 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-cyan {
+    @apply bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-400 border border-cyan-400/30 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-dark-400 border border-dark-50 rounded-xl p-6;
+  }
+
+  .card-hover {
+    @apply card hover:border-earth-300/30 transition-colors duration-200 cursor-pointer;
+  }
+
+  .input-field {
+    @apply w-full bg-dark-300 border border-dark-50 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-earth-300/50 focus:ring-1 focus:ring-earth-300/30 transition-colors;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-gray-400 mb-1.5;
+  }
+
+  .stat-card {
+    @apply card flex flex-col;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .stat-label {
+    @apply text-sm text-gray-400 mt-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-earth {
+    @apply badge bg-earth-300/10 text-earth-300;
+  }
+
+  .badge-cyan {
+    @apply badge bg-cyan-400/10 text-cyan-400;
+  }
+
+  .badge-success {
+    @apply badge bg-emerald-500/10 text-emerald-400;
+  }
+
+  .badge-warning {
+    @apply badge bg-amber-500/10 text-amber-400;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-500/10 text-red-400;
+  }
+
+  .table-header {
+    @apply text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm text-gray-300;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-dark-200 transition-colors duration-200;
+  }
+
+  .sidebar-link-active {
+    @apply sidebar-link text-earth-300 bg-earth-300/10;
+  }
+
+  /* Patient portal — larger touch targets */
+  .portal-btn {
+    @apply w-full py-4 px-6 rounded-xl text-lg font-medium transition-colors duration-200;
+  }
+
+  .portal-card {
+    @apply bg-dark-400 border border-dark-50 rounded-2xl p-5;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-earth-300 to-cyan-400;
+  }
+
+  .glow-earth {
+    box-shadow: 0 0 20px rgba(212, 165, 116, 0.15);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+  }
+}
