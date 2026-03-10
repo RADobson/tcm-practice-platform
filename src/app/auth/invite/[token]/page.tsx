@@ -34,7 +34,8 @@ export default function InvitePage() {
         setPatientId(data.id);
         setEmail(data.email || '');
         setFullName(`${data.first_name} ${data.last_name}`);
-        setPracticeName((data as any).practices?.name || '');
+        const practices = (data as Record<string, unknown>).practices as Record<string, unknown> | null;
+        setPracticeName((practices?.name as string) || '');
       }
       setValidating(false);
     }

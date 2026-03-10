@@ -8,13 +8,17 @@ import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import type { ClinicalNote, Patient } from '@/lib/types';
 
+interface NoteWithPatient extends ClinicalNote {
+  patient?: { first_name: string; last_name: string };
+}
+
 export default function ClinicalNotesPage() {
   const { practice, profile } = useAppStore();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
-  const [notes, setNotes] = useState<ClinicalNote[]>([]);
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [notes, setNotes] = useState<NoteWithPatient[]>([]);
+  const [patients, setPatients] = useState<Pick<Patient, 'id' | 'first_name' | 'last_name'>[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedNote, setSelectedNote] = useState<ClinicalNote | null>(null);
   const [loading, setLoading] = useState(true);
@@ -246,7 +250,7 @@ export default function ClinicalNotesPage() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <span className="text-white font-medium">
-                    {(note as any).patient?.first_name} {(note as any).patient?.last_name}
+                    {note.patient?.first_name} {note.patient?.last_name}
                   </span>
                   <span className="text-gray-500 text-sm ml-3">
                     {format(new Date(note.visit_date), 'MMM d, yyyy h:mm a')}

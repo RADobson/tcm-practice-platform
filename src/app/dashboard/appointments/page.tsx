@@ -4,18 +4,22 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAppStore } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
-import { format, startOfWeek, endOfWeek, addWeeks, subWeeks, eachDayOfInterval, isSameDay, startOfDay, addHours, parseISO } from 'date-fns';
+import { format, startOfWeek, endOfWeek, addWeeks, subWeeks, eachDayOfInterval, isSameDay, addHours, parseISO } from 'date-fns';
 import toast from 'react-hot-toast';
 import type { Appointment, Patient } from '@/lib/types';
 import { APPOINTMENT_TYPES } from '@/lib/tcm-data';
+
+interface AppointmentWithPatient extends Appointment {
+  patient?: { first_name: string; last_name: string };
+}
 
 export default function AppointmentsPage() {
   const { practice, profile } = useAppStore();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentWithPatient[]>([]);
+  const [patients, setPatients] = useState<Pick<Patient, 'id' | 'first_name' | 'last_name'>[]>([]);
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [view, setView] = useState<'week' | 'list'>('week');
@@ -195,7 +199,7 @@ export default function AppointmentsPage() {
                             'bg-earth-300/10 border border-earth-300/20 text-earth-300'
                           }`}
                         >
-                          <div className="font-medium truncate">{(appt as any).patient?.first_name} {(appt as any).patient?.last_name}</div>
+                          <div className="font-medium truncate">{appt.patient?.first_name} {appt.patient?.last_name}</div>
                           <div className="opacity-70">{appt.type}</div>
                         </div>
                       ))}
@@ -220,7 +224,7 @@ export default function AppointmentsPage() {
                       <div className="text-lg text-white">{format(new Date(appt.start_time), 'd')}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-white">{(appt as any).patient?.first_name} {(appt as any).patient?.last_name}</div>
+                      <div className="text-sm text-white">{appt.patient?.first_name} {appt.patient?.last_name}</div>
                       <div className="text-xs text-gray-500">
                         {format(new Date(appt.start_time), 'h:mm a')} — {format(new Date(appt.end_time), 'h:mm a')} · {appt.type}
                       </div>
