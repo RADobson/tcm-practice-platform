@@ -672,6 +672,129 @@ create policy "Authenticated users can manage attachments"
   using (bucket_id = 'attachments' and auth.role() = 'authenticated');
 
 -- ============================================================
+-- CONSULTATION RECORDINGS (audio transcription)
+-- ============================================================
+
+create table consultation_recordings (
+  id uuid primary key default uuid_generate_v4(),
+  practice_id uuid not null references practices(id) on delete cascade,
+  patient_id uuid not null references patients(id) on delete cascade,
+  practitioner_id uuid not null references profiles(id) on delete cascade,
+  appointment_id uuid references appointments(id) on delete set null,
+  audio_url text,
+  duration_seconds integer,
+  transcript text,
+  soap_notes jsonb default '{}', -- { subjective, objective, assessment, plan }
+  status text not null default 'recording', -- recording, transcribing, completed
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table consultation_recordings enable row level security;
+
+create policy "Practice owner manages recordings" on consultation_recordings for all using (
+  exists (select 1 from practices where id = consultation_recordings.practice_id and owner_id = auth.uid())
+);
+
+create index idx_recordings_patient on consultation_recordings(patient_id);
+create trigger update_recordings_updated_at before update on consultation_recordings for each row execute function update_updated_at();
+
+-- ============================================================
+-- AI TREATMENT PLANS
+-- ============================================================
+
+create table ai_treatment_plans (
+  id uuid primary key default uuid_generate_v4(),
+  practice_id uuid not null references practices(id) on delete cascade,
+  patient_id uuid not null references patients(id) on delete cascade,
+  practitioner_id uuid not null references profiles(id) on delete cascade,
+  pattern_diagnosis text not null,
+  treatment_principles text[] default '{}',
+  acupuncture_protocol jsonb default '[]', -- [{ point, location, reasoning, technique, moxa }]
+  point_combinations jsonb default '[]', -- [{ name, points, reasoning }]
+  adjunct_therapies jsonb default '{}', -- { cupping, gua_sha, ear_seeds }
+  ai_reasoning text,
+  practitioner_notes text,
+  status text not null default 'draft', -- draft, accepted, modified, rejected
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table ai_treatment_plans enable row level security;
+
+create policy "Practice owner manages treatment plans" on ai_treatment_plans for all using (
+  exists (select 1 from practices where id = ai_treatment_plans.practice_id and owner_id = auth.uid())
+);
+
+create index idx_ai_treatment_plans_patient on ai_treatment_plans(patient_id);
+create trigger update_ai_treatment_plans_updated_at before update on ai_treatment_plans for each row execute function update_updated_at();
+
+-- ============================================================
+-- PATIENT INTAKES (AI-analysed)
+-- ============================================================
+
+create table patient_intakes (
+  id uuid primary key default uuid_generate_v4(),
+  practice_id uuid not null references practices(id) on delete cascade,
+  patient_id uuid not null references patients(id) on delete cascade,
+  appointment_id uuid references appointments(id) on delete set null,
+  -- Form responses
+  chief_complaint text,
+  medical_history text,
+  current_medications text,
+  allergies text,
+  sleep_quality text,
+  sleep_hours text,
+  digestion text,
+  appetite text,
+  thirst text,
+  urination text,
+  bowel_movements text,
+  menstrual_notes text,
+  emotions text,
+  energy_level text,
+  pain_description text,
+  temperature_preference text,
+  sweating text,
+  additional_notes text,
+  -- AI analysis
+  ai_analysis jsonb default '{}', -- { likely_patterns, red_flags, focus_areas, suggested_questions }
+  -- Status
+  status text not null default 'pending', -- pending, submitted, analysed, reviewed
+  submitted_at timestamptz,
+  reviewed_at timestamptz,
+  reviewed_by uuid references profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table patient_intakes enable row level security;
+
+create policy "Practice owner manages intakes" on patient_intakes for all using (
+  exists (select 1 from practices where id = patient_intakes.practice_id and owner_id = auth.uid())
+);
+
+create policy "Patients can manage own intakes" on patient_intakes for all using (
+  exists (select 1 from patients where id = patient_intakes.patient_id and user_id = auth.uid())
+);
+
+create index idx_intakes_patient on patient_intakes(patient_id);
+create index idx_intakes_status on patient_intakes(status);
+create trigger update_intakes_updated_at before update on patient_intakes for each row execute function update_updated_at();
+
+-- Storage bucket for consultation audio
+insert into storage.buckets (id, name, public)
+values ('consultation-audio', 'consultation-audio', false);
+
+create policy "Authenticated users can upload consultation audio"
+  on storage.objects for insert
+  with check (bucket_id = 'consultation-audio' and auth.role() = 'authenticated');
+
+create policy "Authenticated users can view consultation audio"
+  on storage.objects for select
+  using (bucket_id = 'consultation-audio' and auth.role() = 'authenticated');
+
+-- ============================================================
 -- REALTIME
 -- ============================================================
 
