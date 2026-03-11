@@ -336,6 +336,163 @@ export interface Homework {
   updated_at: string;
 }
 
+// ============ POST-CONSULTATION TYPES ============
+
+export type EmailStatus = 'pending' | 'sent' | 'failed';
+export type QiFlowState = 'before' | 'after';
+export type PointTechnique = 'tonify' | 'reduce' | 'even' | 'moxa' | 'cupping' | 'electroacupuncture' | 'bloodletting';
+export type PathologyType = 'stagnation' | 'deficiency' | 'excess' | 'heat' | 'cold' | 'dampness' | 'phlegm' | 'wind';
+
+export interface PostConsultationResult {
+  id: string;
+  practice_id: string;
+  patient_id: string;
+  practitioner_id: string;
+  treatment_id?: string;
+  clinical_note_id?: string;
+  appointment_id?: string;
+  ai_summary: string;
+  ai_summary_plain: string;
+  research_enrichment: ResearchEnrichment[];
+  classical_references: ClassicalReference[];
+  lifestyle_recommendations: LifestyleRecommendations;
+  dietary_therapy: DietaryTherapy;
+  visualization_data: VisualizationData;
+  treated_points: TreatedPoint[];
+  pathology_state: PathologyState;
+  access_token: string;
+  email_sent_at?: string;
+  email_status: EmailStatus;
+  patient_gender: string;
+  treatment_date: string;
+  next_appointment?: string;
+  created_at: string;
+  updated_at: string;
+  patient?: Patient;
+  practitioner?: Profile;
+}
+
+export interface ResearchEnrichment {
+  topic: string;
+  modern_research: string;
+  classical_basis: string;
+  source: string;
+}
+
+export interface ClassicalReference {
+  text_name: string;
+  text_chinese: string;
+  chapter?: string;
+  passage: string;
+  relevance: string;
+}
+
+export interface LifestyleRecommendations {
+  diet: string[];
+  exercise: string[];
+  sleep: string[];
+  emotional: string[];
+  seasonal: string[];
+  general: string[];
+}
+
+export interface DietaryTherapy {
+  beneficial_foods: FoodRecommendation[];
+  foods_to_avoid: FoodRecommendation[];
+  tea_recommendations: string[];
+  cooking_methods: string[];
+  meal_timing: string[];
+}
+
+export interface FoodRecommendation {
+  food: string;
+  nature: string; // warm, cool, neutral, hot, cold
+  flavour: string; // sweet, sour, bitter, pungent, salty
+  organ_affinity: string[];
+  therapeutic_action: string;
+}
+
+export interface VisualizationData {
+  meridians_affected: string[];
+  qi_flow_before: QiFlowConfig;
+  qi_flow_after: QiFlowConfig;
+}
+
+export interface QiFlowConfig {
+  global_intensity: number;
+  meridian_states: Record<string, MeridianFlowState>;
+}
+
+export interface MeridianFlowState {
+  flow_speed: number; // 0–1, 0 = blocked, 1 = full flow
+  intensity: number; // 0–1, brightness/thickness
+  pathologies: PathologyMarker[];
+}
+
+export interface PathologyMarker {
+  type: PathologyType;
+  location: number; // 0–1 along meridian path
+  severity: number; // 0–1
+}
+
+export interface PathologyState {
+  primary_pattern: string;
+  secondary_patterns: string[];
+  affected_organs: string[];
+  pathology_type: PathologyType[];
+  description: string;
+}
+
+export interface TreatedPoint {
+  point_id: string; // e.g., "LU-7"
+  meridian_id: string; // e.g., "lung"
+  technique: PointTechnique;
+  technique_chinese: string;
+  retention_time?: number;
+  sensation?: string;
+  therapeutic_purpose: string;
+}
+
+export interface PostConsultationView {
+  id: string;
+  result_id: string;
+  viewed_at: string;
+  ip_hash?: string;
+  user_agent?: string;
+  duration_seconds?: number;
+}
+
+// ============ MERIDIAN VISUALIZATION TYPES ============
+
+export interface MeridianData {
+  id: string;
+  name_english: string;
+  name_pinyin: string;
+  name_chinese: string;
+  abbreviation: string;
+  organ: string;
+  element: string;
+  yin_yang: 'yin' | 'yang';
+  paired_meridian: string;
+  flow_direction: 'ascending' | 'descending';
+  colour: string;
+  pathway: [number, number, number][]; // 3D coordinates
+  points: MeridianPoint[];
+}
+
+export interface MeridianPoint {
+  id: string; // e.g., "LU-1"
+  number: number;
+  name_pinyin: string;
+  name_chinese: string;
+  name_english: string;
+  position: [number, number, number]; // 3D coordinate
+  category?: string; // Five Shu, Yuan, Luo, Xi-Cleft, etc.
+  functions: string[];
+  indications: string[];
+  common_techniques: PointTechnique[];
+}
+
 export interface SymptomEntry {
   id: string;
   patient_id: string;
