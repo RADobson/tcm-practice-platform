@@ -140,6 +140,7 @@ export default function TriggerPointsPage() {
     setSelectedPointIdx(null);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _viewPoints = points.filter((p) => p.view === bodyView);
   const allViewPoints = points;
 

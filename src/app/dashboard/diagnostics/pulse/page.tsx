@@ -417,7 +417,7 @@ interface PositionCardProps {
 }
 
 function PositionCard({
-  positionKey: _positionKey,
+  positionKey: _positionKey, // eslint-disable-line @typescript-eslint/no-unused-vars
   label,
   organ,
   position,

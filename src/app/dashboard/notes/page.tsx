@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import type { ClinicalNote, Patient } from '@/lib/types';
 
-interface NoteWithPatient extends ClinicalNote {
+interface NoteWithPatient extends Omit<ClinicalNote, 'patient'> {
   patient?: { first_name: string; last_name: string };
 }
 

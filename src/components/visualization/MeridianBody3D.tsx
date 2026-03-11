@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo, useCallback } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import type {
@@ -14,7 +14,6 @@ import type {
 } from '@/lib/types';
 import { MERIDIANS } from '@/lib/meridian-data';
 import {
-  interpolateFlowStates,
   getParticleParams,
   getMeridianPathologyColour,
 } from '@/lib/qi-flow-engine';
@@ -305,8 +304,12 @@ function MeridianPathway({
   flowState,
   beforeState,
   afterState,
+  // Reserved for transition animation (Phase 2)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transitioning,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transitionProgress,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setTransitioning,
   treatedPointIds,
   treatedPoints,

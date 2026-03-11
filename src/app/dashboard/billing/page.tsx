@@ -9,7 +9,7 @@ import type { Invoice, InvoiceItem, PaymentRecord, InvoiceStatus } from '@/lib/t
 
 type PatientOption = { id: string; first_name: string; last_name: string };
 
-interface InvoiceWithPatient extends Invoice {
+interface InvoiceWithPatient extends Omit<Invoice, 'patient'> {
   patient?: { id: string; first_name: string; last_name: string };
 }
 

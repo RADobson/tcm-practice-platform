@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import type { Appointment, Patient } from '@/lib/types';
 import { APPOINTMENT_TYPES } from '@/lib/tcm-data';
 
-interface AppointmentWithPatient extends Appointment {
+interface AppointmentWithPatient extends Omit<Appointment, 'patient'> {
   patient?: { first_name: string; last_name: string };
 }
 
